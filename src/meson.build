@@ -13,7 +13,7 @@ dependencies = [
 lib_wlr_glew_renderer = library(
   meson.project_name(), sources,
   dependencies: dependencies,
-  version: meson.project_version(),
+  soversion: soversion,
   include_directories: inc,
   install: true,
 )

@@ -160,6 +160,7 @@ static bool
 glew_bind_buffer(
     struct wlr_renderer *wlr_renderer, struct wlr_buffer *wlr_buffer)
 {
+  static struct wlr_egl_context stashed_egl;
   struct wlr_glew_renderer *renderer = glew_get_renderer(wlr_renderer);
 
   if (renderer->current_buffer != NULL) {
@@ -172,10 +173,17 @@ glew_bind_buffer(
 
     wlr_buffer_unlock(renderer->current_buffer->buffer);
     renderer->current_buffer = NULL;
+
+    if (wlr_buffer == NULL) {
+      wlr_egl_restore_context(&stashed_egl);
+    }
+  } else {
+    if (wlr_buffer != NULL) {
+      wlr_egl_save_context(&stashed_egl);
+    }
   }
 
   if (wlr_buffer == NULL) {
-    wlr_egl_unset_current(renderer->egl);
     return true;
   }
 
